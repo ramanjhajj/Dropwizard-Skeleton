@@ -1,0 +1,38 @@
+template: Hello, %s!
+
+defaultName: ${DW_DEFAULT_NAME:-Stranger}
+
+server:
+  applicationConnectors:
+    - type: http
+      port: 8080
+    - type: https
+      port: 8443
+      keyStorePath: example.keystore
+      keyStorePassword: example
+      validateCerts: false
+  adminConnectors:
+    - type: http
+      port: 8081
+    - type: https
+      port: 8444
+      keyStorePath: example.keystore
+      keyStorePassword: example
+      validateCerts: false
+
+database:
+  driverClass: org.postgresql.Driver
+  user: pg-user
+  password: iAMs00perSecrEET
+  url: jdbc:postgresql://localhost/db-prod
+
+  properties:
+    charSet: UTF-8
+
+  maxWaitForConnection: 1s
+  validationQuery: "/* MyService Health Check */ SELECT 1"
+  minSize: 8
+  maxSize: 32
+  checkConnectionWhileIdle: false
+  checkConnectionHealthWhenIdleFor: 10s
+  closeConnectionIfIdleFor: 1 minute
