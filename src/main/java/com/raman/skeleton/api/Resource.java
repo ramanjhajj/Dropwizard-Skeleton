@@ -13,8 +13,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by Raman on 15/11/15.
+ * This is the resource class of the application, which can be
+ * accessed at the url /hello-world
  */
-
 
 @Path("/hello-world")
 @Produces(MediaType.APPLICATION_JSON)
@@ -35,6 +36,5 @@ public class Resource {
 
         final String value = String.format(template, name.or(defaultName));
         return new Representation(counter.incrementAndGet(), value);
-
     }
 }

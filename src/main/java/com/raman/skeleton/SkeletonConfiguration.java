@@ -10,6 +10,8 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Created by Raman on 14/11/15.
+ * This is the skeleton configuration class which extends Dropqizard
+ * Configuration class and maps to the config.yaml file in the resources
  */
 public class SkeletonConfiguration extends Configuration {
 

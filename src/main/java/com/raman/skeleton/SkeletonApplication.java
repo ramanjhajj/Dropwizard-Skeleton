@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Created by Raman on 15/11/15.
+ * This is the main entry point of the Dropqizard Application
+ * which adds all the resources, filters, health checks to the
+ * application environment on run.
  */
 public class SkeletonApplication extends Application<SkeletonConfiguration> {
 
