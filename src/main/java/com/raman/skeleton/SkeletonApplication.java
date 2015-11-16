@@ -1,5 +1,7 @@
 package com.raman.skeleton;
 
+import com.raman.skeleton.api.Resource;
+import com.raman.skeleton.healthcheck.TemplateHealthCheck;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.setup.Bootstrap;
@@ -27,6 +29,14 @@ public class SkeletonApplication extends Application<SkeletonConfiguration> {
 
     @Override
     public void run(SkeletonConfiguration skeletonConfiguration, Environment environment) throws Exception {
+        //Creating a resource
+        Resource resource = new Resource(skeletonConfiguration.getTemplate(), skeletonConfiguration.getDefaultName());
 
+        //Creating a health check and adding to environment
+        TemplateHealthCheck templateHealthCheck = new TemplateHealthCheck(skeletonConfiguration.getTemplate());
+        environment.healthChecks().register("template", templateHealthCheck);
+
+        //adding a resource to jersey
+        environment.jersey().register(resource);
     }
 }
