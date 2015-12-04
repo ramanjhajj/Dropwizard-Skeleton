@@ -2,7 +2,8 @@ package com.raman.skeleton.api;
 
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
-import com.raman.skeleton.models.Representation;
+import com.raman.skeleton.dbOperations.SkeletonDAO;
+import com.raman.skeleton.models.SkeletonModel;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -23,18 +24,20 @@ public class Resource {
     private final String template;
     private final String defaultName;
     private final AtomicLong counter;
+    private final SkeletonDAO skeletonDAO;
 
-    public Resource(String template, String defaultName) {
+    public Resource(String template, String defaultName, SkeletonDAO skeletonDAO) {
         this.template = template;
         this.defaultName = defaultName;
         this.counter = new AtomicLong();
+        this.skeletonDAO = skeletonDAO;
     }
 
     @GET
     @Timed
-    public Representation sayHello(@QueryParam("name") Optional<String> name) {
+    public SkeletonModel sayHello(@QueryParam("name") Optional<String> name) {
 
         final String value = String.format(template, name.or(defaultName));
-        return new Representation(counter.incrementAndGet(), value);
+        return new SkeletonModel(counter.incrementAndGet(), value);
     }
 }

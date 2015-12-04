@@ -1,11 +1,15 @@
 package com.raman.skeleton;
 
 import com.raman.skeleton.api.Resource;
+import com.raman.skeleton.dbOperations.SkeletonDAO;
+import com.raman.skeleton.filter.SkeletonFilter;
 import com.raman.skeleton.healthcheck.TemplateHealthCheck;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
+import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.skife.jdbi.v2.DBI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +24,7 @@ public class SkeletonApplication extends Application<SkeletonConfiguration> {
     private final Logger logger = LoggerFactory.getLogger(SkeletonApplication.class);
 
     public static void main(String[] args) throws Exception {
-        new SkeletonApplication().run(args);
+        new SkeletonApplication().run("server", "config/default.yml");
     }
 
     @Override
@@ -32,13 +36,21 @@ public class SkeletonApplication extends Application<SkeletonConfiguration> {
 
     @Override
     public void run(SkeletonConfiguration skeletonConfiguration, Environment environment) throws Exception {
-        //Creating a resource
-        Resource resource = new Resource(skeletonConfiguration.getTemplate(), skeletonConfiguration.getDefaultName());
+        final DBIFactory factory = new DBIFactory();
+        final DBI dbi = factory.build(environment, skeletonConfiguration.getDataSourceFactory(), "SkeletonDB");
+        final SkeletonDAO skeletonDAO = dbi.onDemand(SkeletonDAO.class);
+
+        SkeletonFilter skeletonFilter = new SkeletonFilter();
+        environment.servlets().addFilter("SkeletonFilter", skeletonFilter)
+                .addMappingForUrlPatterns(null, true, "/*");
 
         //Creating a health check and adding to environment
-        TemplateHealthCheck templateHealthCheck = new TemplateHealthCheck(skeletonConfiguration.getTemplate());
+        TemplateHealthCheck templateHealthCheck = new TemplateHealthCheck("test");
         environment.healthChecks().register("template", templateHealthCheck);
 
+
+        //Creating a resource
+        Resource resource = new Resource("test","test", skeletonDAO);
         //adding a resource to jersey
         environment.jersey().register(resource);
     }
